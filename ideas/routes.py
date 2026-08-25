@@ -14,11 +14,6 @@ def is_member(team_id, user_id):
 
 # def validate_user_team(user_id, team_id): 시간 남으면
 
-@idea_bp.route('/dev/login/<user_id>')
-def dev_login(user_id):
-    session['user_id'] = user_id
-    return f'로그인됨: {user_id}'
-
 @idea_bp.route('/idea/<team_id>')
 def idea(team_id):
     user_id = session.get('user_id')
