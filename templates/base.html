@@ -11,10 +11,10 @@
     <body>
         <nav>
             <a href="/">PICKME</a>
-            {% if user %}
-            <span>{{ user.nickname }}</span>
+            {% if g.user %}
+            <span>{{ g.user.nickname }}님</span>
 
-            <form action="/logout" method="POST">
+            <form action="{{ url_for('auth.logout') }}" method="POST">
                 <button>로그아웃</button>
             </form>
             {% endif %}

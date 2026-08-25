@@ -1,14 +1,50 @@
-from flask import Blueprint, render_template, redirect, request, url_for
-from werkzeug.security import generate_password_hash
+from flask import Blueprint, render_template, redirect, session, request, url_for, g
+from bson import ObjectId #MongoDB의 ID를 object로 내려주지만 파이썬에는 ObjectId라는 클래스가 내장되어있지 않아, 별도로 import해주어 사용
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from db import db
 
 auth_bp = Blueprint('auth', __name__)
 users = db["users"]
 
-@auth_bp.route('/login')
+@auth_bp.before_app_request
+def load_nickname():
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = users.find_one({
+            "_id": ObjectId(user_id)
+        })
+
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template("auth/login.html")
+    if request.method == "POST":        
+        userid = request.form.get("userid")
+        password = request.form.get("password")
+
+        if not all([userid, password]):
+            return render_template(
+                "auth/login.html",
+                error="아이디와 비밀번호를 입력해주세요."
+            )
+
+        #유저 정보 가져오기
+        user = users.find_one({"userid": userid})
+
+        if user is None or not check_password_hash(user["password"], password):
+            return render_template(
+                "auth/login.html",
+                error="아이디 또는 비밀번호가 올바르지 않습니다."
+            )
+
+        session.clear() # 기존에 세션이 있을수도 있으니 지우기
+        session["user_id"] = str(user["_id"]) # 세션에 사용자 등록
+
+        return redirect(url_for("index")) # 로그인 성공 시, 메인화면으로 이동
+    
+    return render_template("auth/login.html") # GET의 경우, 페이지만 보여줌
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -51,3 +87,8 @@ def signup():
         return redirect(url_for("auth.login"))
     
     return render_template("auth/signup.html")
+
+@auth_bp.route('logout', methods=["POST"])
+def logout():
+    session.clear()
+    return redirect(url_for("index")) #로그아웃 성공 시, 메인화면으로 이동
