@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PICK ME</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <nav>
+            <a href="/">PICKME</a>
+            {% if user %}
+            <span>{{ user.nickname }}</span>
+
+            <form action="/logout" method="POST">
+                <button>로그아웃</button>
+            </form>
+            {% endif %}
+        </nav>
+
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>
