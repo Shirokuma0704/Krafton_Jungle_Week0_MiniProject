@@ -1,0 +1,25 @@
+.auth-form input {
+    display: block;
+    border: 1px solid black;
+    padding: 8px;
+    margin-bottom: 16px;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.auth-form {
+    width: 400px;
+    border: 1px solid black;
+    padding: 24px;
+    margin: 40px;
+}
+
+.auth-form button {
+    border: 1px solid blue;
+    color: blue;
+    padding: 20px;
+    margin: 20px auto;
+}
