@@ -17,7 +17,7 @@ def is_leader(team_id, user_id):
         return False
     return True
 
-@vote_bp.route('/vote/<team_id>') #Vote 페이지 진입
+@vote_bp.route('/votes/<team_id>') #Vote 페이지 진입
 def vote(team_id):
 
     user_id = session.get("user_id")
@@ -43,5 +43,13 @@ def vote(team_id):
         return "401"
 
 def vote_count(team_id):
-
+# db에 투표 업로드
 def vote_result(team_id):
+# 업로드 투표 통계생성
+
+
+@vote_bp.route('/votes/<team_id>/start', method=['POST']) #투표시작
+
+@vote_bp.route('/votes/<team_id>', method=['POST']) #개별 투표
+
+@vote_bp.route('/votes/<team_id>/result', method=['GET']) #투표 결과
