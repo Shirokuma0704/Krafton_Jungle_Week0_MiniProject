@@ -4,7 +4,6 @@
 <div class="p-5">
     <h2 class="mb-5 text-3xl font-bold">아이디어 목록</h2>
 
-<<<<<<< HEAD
     <div class="space-y-3">
         {% for idea in ideas %}
         <div class="rounded-lg border-2 border-black p-4">
@@ -35,37 +34,10 @@
             아직 아이디어가 없습니다.
         </div>
         {% endfor %}
-=======
-{% for idea in ideas %}
-    <div class="border-2 border-blue-500 rounded">
-        <h3 class="text-xl font-bold text-blue-500">{{ idea.title }}</h3>
-        <p>{{ idea.content }}</p>
-    {% if idea.author_id == user %}
-        <form action="/ideas/{{ idea['_id'] }}/delete" method="post">
-        <button class="p-4 border-2 border-gray-500">삭제</button>
-        </form>
-        <form action="/ideas/{{ idea['_id'] }}/edit" method="post">
-            <details>
-                <summary>수정</summary>
-                <input name="title" value="{{ idea.title }}" placeholder="제목" class="border p-2">
-                <textarea name="content" class="border p-2" placeholder="내용">{{ idea.content }}</textarea>
-                <button class="ext-xl font-bold text-blue-500">등록</button>
-            </details>
-        </form>
-    {% endif %}
->>>>>>> origin/main
     </div>
 
-<<<<<<< HEAD
     <form action="/ideas/{{ team_id }}/add" method="post" class="mt-6 flex flex-col gap-3 rounded-lg border-2 border-blue-500 p-4">
-        <h3 class="text-xl font-bold text-blue-500">아이디어 등록</h3>
-=======
-<form action="/ideas/{{ team_id }}/add" method="post">
-  <input name="title" class="border p-2" placeholder="제목">
-  <textarea name="content" placeholder="내용" class="border p-2"></textarea>
-  <button class="ext-xl font-bold text-blue-500">등록</button>
-</form>
->>>>>>> origin/main
+        <h3 class="text-xl font-bold text-blue-500">등록</h3>
 
         <input
             name="title"
