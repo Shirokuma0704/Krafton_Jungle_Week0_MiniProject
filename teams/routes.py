@@ -35,10 +35,10 @@ def making_team():
                 break
 
         team = {
-            "teamid": teamid,
+            "team_name": teamid,
             "title": title,
             "peoplenum": peoplenum,
-            "kingid": kingid,
+            "king_id": kingid,
             "status" : TeamStatus.IDEA.value,
             "code": code,
             "members": [kingid],
@@ -52,6 +52,9 @@ def making_team():
 @teams_bp.route("/join_team", methods=['POST'])
 def join_team():
         code = request.form.get("code") #초대 코드
+
+        if code is None:
+            return "존재하지 않는 초대 코드입니다."
 
         team = team_collection.find_one({"code": code})
 
