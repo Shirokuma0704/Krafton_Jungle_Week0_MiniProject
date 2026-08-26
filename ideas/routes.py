@@ -47,7 +47,7 @@ def add_idea(team_id):
     title = request.form['title']
     content = request.form['content']
     db.ideas.insert_one({"team_id": team_id, "author_id":user_id, "title":title, "content":content, "created_at":datetime.now(timezone.utc)})
-    return redirect(url_for('ideas.idea', team_id=team_data["_id"]))
+    return redirect(url_for('ideas.idea', team_id=team_id))
 
 @idea_bp.route('/<idea_id>/delete', methods=['POST'])
 def del_idea(idea_id):
