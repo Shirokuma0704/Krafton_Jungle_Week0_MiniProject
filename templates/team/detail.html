@@ -3,28 +3,50 @@
 {% block content %}
 
 <!--팀 상단 정보-->
-<!--items-center: 가운데 정렬-->
-<div class=" items-center border-2 border-black-200 rounded">
-    <div class="mb-2">팀명: {{ team.team_name }}</div>
-    <div class="mb-2">주제: {{ team.title }} </div>
-    <div class="mb-2">초대코드: {{ team.code }} </div>
-    <div class="mb-2">인원수: {{ team.members | length }}/{{ team.peoplenum }}명</div>
-    <div class="mb-2"> 현재 상태:
-        {%if team.status == "IDEA" %}
-        아이디어 수집중
-        {% elif team.status == "VOTING"%}
-        투표중
-        {% elif team.status == "DONE"%}
-        선정 완료
-        {% endif %}
-    </div>
+<!--justify-between: 요소 왼 오 나누기 -->
+<div class=" items-start flex justify-between border-b-2 border-black p-5 px-28">
+    <section class="flex-start"> <!--flex-start: 왼쪽 정렬-->
+        <div class="mb-2 text-5xl">{{ team.team_name }} 팀</div>
+        <div class="mb-2 text-gray-400">주제: {{ team.title }} </div>
+    </section>
+    <section>
+        <div class="flex items-center gap-2 mb-2">
+            <span class="rounded-full border-2 border-blue-500 bg-white px-3 py-1 text-blue-500">
+                코드: <input type="text" class="w-16 bg-transparent text-center outline-none" readonly value="{{ team.code }}" id="copyTxt">
+            </span>
+            <button onclick="copy()" class="rounded-full border-2 border-blue-300 bg-white px-3 py-1 text-blue-300">COPY</button>
+        </div>
+        <div class="mb-2">
+        <span class="rounded-full border-2 border-blue-500 bg-white px-3 py-1 text-blue-500">인원수: {{ team.members | length }}/{{ team.peoplenum }}명</span>
+        </div>
+        <section class="flex-end">
+            <div class="mb-2"><span class="rounded-full border-2 border-blue-500 bg-white px-3 py-1 text-blue-500">현재 상태:
+                {%if team.status == "IDEA" %}
+                아이디어 수집중
+                {% elif team.status == "VOTING"%}
+                투표중
+                {% elif team.status == "DONE"%}
+                선정 완료
+                {% endif %}
+            </span></div>
+        </section>
+    </section>
 </div>
 
-<div class="items-center border-2 border-black-200 rounded">
+<div class=" items-start flex justify-between border-b-2 border-black p-5 px-28 text-xl">
     <a href="{{ url_for('votes.votes', team_id=team['_id']) }}">투표</a>
     <a href="{{ url_for('ideas.idea', team_id=team['_id']) }}">아이디어</a> <!--블루프린트 이름.함수이름으로 연결!-->
     <a href="{{ url_for('members.members', team_id=team['_id']) }}">멤버 관리</a>
 </div>
 
+<script>
+    function copy() {
+        var copyTxt = document.getElementById("copyTxt");
+
+        copyTxt.select();
+        navigator.clipboard.writeText(copyTxt.value);
+        alert("복사되었습니다.");
+    }
+</script>
 {% block team_content %}{% endblock %}
 {% endblock %}
