@@ -27,7 +27,9 @@ def idea(team_id):
         return "잘못된 접근입니다.", 403
 
     docs = list(db.ideas.find({"team_id": team_id}))
-    return render_template('team/_ideas.html', ideas=docs, user= user_id, team=team_id)
+
+    team=db.teams.find_one({"_id": objectid.ObjectId(team_id)})
+    return render_template('team/ideas.html', ideas=docs, user= user_id, team_id=team_id, team=team)
 
 @idea_bp.route('/<team_id>/add', methods=['POST'])
 def add_idea(team_id):

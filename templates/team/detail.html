@@ -21,8 +21,8 @@
 </div>
 
 <div class="items-center border-2 border-black-200 rounded">
-    <a href="{{ url_for('idea.ideas', team_id=team['_id']) }}">아이디어</a> <!--블루프린트 이름.함수이름으로 연결!-->
     <a href="{{ url_for('votes.votes', team_id=team['_id']) }}">투표</a>
+    <a href="{{ url_for('ideas.idea', team_id=team['_id']) }}">아이디어</a> <!--블루프린트 이름.함수이름으로 연결!-->
     <a href="{{ url_for('members.members', team_id=team['_id']) }}">멤버 관리</a>
 </div>
 

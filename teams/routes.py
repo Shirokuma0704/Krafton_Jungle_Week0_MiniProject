@@ -122,5 +122,9 @@ def get_team(team_id):
     if team is None:
         flash("존재하지 않는 팀입니다.")
         return redirect(url_for("index"))
+    #내 팀이 아닌 경우 메인화면으로 이동
+    if g.user["_id"] not in team["members"]:
+        flash("접근 권한이 없는 팀입니다.")
+        return redirect(url_for("index"))
     
     return render_template("team/votes.html", team=team)
