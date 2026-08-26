@@ -127,4 +127,4 @@ def get_team(team_id):
         flash("접근 권한이 없는 팀입니다.")
         return redirect(url_for("index"))
     
-    return render_template("team/votes.html", team=team)
+    return redirect(url_for("ideas.idea",team_id=team_id))
