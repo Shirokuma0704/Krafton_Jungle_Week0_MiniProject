@@ -22,7 +22,7 @@ def vote(team_id):
 
     user_id = session.get("user_id")
     if user_id is None:
-        return "403"
+        return "402"
 
     user_id = objectid.ObjectId(user_id)
     team_id= objectid.ObjectId(team_id)
@@ -30,26 +30,35 @@ def vote(team_id):
         return "403"
 
     teams_data = db.teams.find({"_id": team_id})
+    is_leader = is_leader(team_id, user_id)
 
-    if teams_data['status'] == 0:
-        render_template()
-    elif teams_data['status'] == 1:
-        vote_count(team_id)
-        render_template()
-    elif teams_data['status'] == 2:
-        vote_result(team_id)
-        render_template()
+    if teams_data['status'] == IDEA:
+        render_template('team/_vote.html', user=user_id, leader=is_leader, status=0)
+    elif teams_data['status'] == VOTING:
+        vote_check = vote_check(team_id)
+        render_template('team/_vote.html', user=user_id, leader=is_leader, status=1, vote_check=vote_check)
+    elif teams_data['status'] == DONE:
+        vote_result = vote_result(team_id)
+        return redirect(url_for("teamteam_result", team_id=team_id)) #vote/result으로 리다이렉트
     else:
         return "401"
 
-def vote_count(team_id):
-# db에 투표 업로드
+def vote_check(team_id):
+db.votes.find({"team_id": team_id})
+
+
+
 def vote_result(team_id):
 # 업로드 투표 통계생성
 
 
 @vote_bp.route('/votes/<team_id>/start', method=['POST']) #투표시작
+def start_vote(team_id,):
+
+
+
 
 @vote_bp.route('/votes/<team_id>', method=['POST']) #개별 투표
 
 @vote_bp.route('/votes/<team_id>/result', method=['GET']) #투표 결과
+def
