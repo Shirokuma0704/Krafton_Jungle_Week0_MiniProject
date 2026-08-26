@@ -77,5 +77,5 @@ def join_team():
 
         return redirect(url_for("index"))
 
-@teams_bp.route("/<team_id>")
-def view_team():
+# @teams_bp.route("/<team_id>")
+# def view_team():
