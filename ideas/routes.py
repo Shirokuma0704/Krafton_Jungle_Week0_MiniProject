@@ -1,54 +1,56 @@
-from flask import Blueprint, render_template, session, request, redirect
+from flask import Blueprint, render_template, session, request, redirect, url_for
 from db import db
 from bson import objectid
 from datetime import datetime, timezone
 
 
+
 idea_bp = Blueprint('ideas', __name__)
 
 def is_member(team_id, user_id):
-    check = db.team.find_one({"team_id": team_id, "user_id": user_id})
+    check = db.teams.find_one({"_id": team_id, "members": user_id})
     if check is None:
         return False
     return True
 
 
-@idea_bp.route('/ideas/<team_id>')
+@idea_bp.route('/<team_id>')
 def idea(team_id):
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
+    if user_id is None:
+        return str(user_id)
+
+    user_id = objectid.ObjectId(user_id)
+    team_id = objectid.ObjectId(team_id)
+    member_check = is_member(team_id,user_id)
+    if member_check is False:
+        return str(member_check)
+
+    docs = list(db.ideas.find({"team_id": team_id}))
+    return render_template('team/_ideas.html', ideas=docs, user= user_id, team=team_id)
+
+@idea_bp.route('/<team_id>/add', methods=['POST'])
+def add_idea(team_id):
+    user_id = session.get("user_id")
     if user_id is None:
         return "401"
 
     user_id = objectid.ObjectId(user_id)
     team_id = objectid.ObjectId(team_id)
-    member_check = is_member(team_id,user_id)
-    if not member_check:
+    member_check = is_member(team_id, user_id)
+    if member_check is False:
         return "403"
-
-    docs = list(db.ideas.find({"team_id": team_id}))
-    return render_template('team/idea.html', ideas=docs, user_id= user_id, team_id=team_id)
-
-@idea_bp.route('/ideas/<team_id>/add', methods=['POST'])
-def add_idea(team_id):
-    user_id = session.get('user_id')
-    if user_id is None:
-        return "401"
-
-    user_id = objectid.ObjectId(user_id)
-    team_id = objecti_d.ObjectId(team_id)
-    member_check = ismember(team_id, user_id)
-    if not member_check:
-        return "403"
+    team_data = db.teams.find_one({"_id": team_id, "members": user_id})
 
     title = request.form['title']
     content = request.form['content']
     db.ideas.insert_one({"team_id": team_id, "author_id":user_id, "title":title, "content":content, "created_at":datetime.now(timezone.utc)})
-    return redirect(url_for('/ideas/{team_id}'))
+    return redirect(url_for('ideas.idea', team_id=team_data["_id"]))
 
-@idea_bp.route('/ideas/<idea_id>/delete', methods=['POST'])
+@idea_bp.route('/<idea_id>/delete', methods=['POST'])
 def del_idea(idea_id):
 
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if user_id is None:
         return "401"
     user_id = objectid.ObjectId(user_id)
@@ -68,12 +70,12 @@ def del_idea(idea_id):
 
 
     db.ideas.delete_one({"_id": idea_id})
-    return redirect(url_for('/ideas/{team_id}'))
+    return redirect(url_for('ideas.idea', team_id=idea_data["team_id"]))
 
-@idea_bp.route('/ideas/<idea_id>/edit', methods=['POST'])
+@idea_bp.route('/<idea_id>/edit', methods=['POST'])
 def edit_idea(idea_id):
 
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if user_id is None:
         return "401"
     user_id = objectid.ObjectId(user_id)
@@ -93,5 +95,5 @@ def edit_idea(idea_id):
     title = request.form['title']
     content = request.form['content']
     db.ideas.update_one({"_id": idea_id}, {"$set": {"title":title, "content":content}})
-    return redirect(url_for('/ideas/{team_id}'))
+    return redirect(url_for('ideas.idea', team_id=idea_data["team_id"]))
 

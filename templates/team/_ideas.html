@@ -1,12 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
 {% for idea in ideas %}
     <div class="border rounded p-4 mb-2">
         <h3 class="font-bold text-lg">{{ idea.title }}</h3>
         <p>{{ idea.content }}</p>
-    {% if idea.author_id == user_id %}
-        <form action="/idea/{{ idea['_id'] }}/delete" method="post">
+    {% if idea.author_id == user %}
+        <form action="/ideas/{{ idea['_id'] }}/delete" method="post">
         <button class="border rounded px-2">삭제</button>
         </form>
-        <form action="/idea/{{ idea['_id'] }}/edit" method="post">
+        <form action="/ideas/{{ idea['_id'] }}/edit" method="post">
             <details>
                 <summary>수정</summary>
                 <input name="title" value="{{ idea.title }}" class="border p-2">
@@ -20,8 +23,10 @@
   <p>아직 아이디어가 없습니다</p>
 {% endfor %}
 
-<form action="/idea/{{ team_id }}/add" method="post">
+<form action="/ideas/{{ team }}/add" method="post">
   <input name="title" class="border p-2">
   <textarea name="content" class="border p-2"></textarea>
   <button class="border rounded px-4 py-2">등록</button>
 </form>
+
+{% endblock %}
