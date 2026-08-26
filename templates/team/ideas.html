@@ -1,33 +1,59 @@
 {% extends "team/detail.html" %}
 
 {% block team_content %}
+<div class="p-5">
+    <h2 class="mb-5 text-3xl font-bold">아이디어 목록</h2>
 
-{% for idea in ideas %}
-    <div class="border rounded p-4 mb-2">
-        <h3 class="font-bold text-lg">{{ idea.title }}</h3>
-        <p>{{ idea.content }}</p>
-    {% if idea.author_id == user %}
-        <form action="/ideas/{{ idea['_id'] }}/delete" method="post">
-        <button class="border rounded px-2">삭제</button>
-        </form>
-        <form action="/ideas/{{ idea['_id'] }}/edit" method="post">
-            <details>
-                <summary>수정</summary>
-                <input name="title" value="{{ idea.title }}" class="border p-2">
-                <textarea name="content" class="border p-2">{{ idea.content }}</textarea>
-                <button class="border rounded px-4 py-2">수정 등록</button>
-            </details>
-        </form>
-    {% endif %}
+    <div class="space-y-3">
+        {% for idea in ideas %}
+        <div class="rounded-lg border-2 border-black p-4">
+            <h3 class="mb-2 text-xl font-bold">{{ idea.title }}</h3>
+            <p class="mb-4 text-gray-600">{{ idea.content }}</p>
+
+            {% if idea.author_id == user %}
+            <div class="flex gap-2">
+                <form action="/ideas/{{ idea['_id'] }}/delete" method="post">
+                    <button class="rounded border border-red-500 px-3 py-1 text-red-500">삭제</button>
+                </form>
+
+                <details>
+                    <summary class="cursor-pointer rounded border px-3 py-1">수정</summary>
+
+                    <form action="/ideas/{{ idea['_id'] }}/edit" method="post" class="mt-3 flex flex-col gap-2">
+                        <input name="title" value="{{ idea.title }}" class="rounded border p-2">
+                        <textarea name="content" class="rounded border p-2">{{ idea.content }}</textarea>
+                        <button class="rounded border border-blue-500 p-2 text-blue-500">수정 등록</button>
+                    </form>
+                </details>
+            </div>
+            {% endif %}
+        </div>
+
+        {% else %}
+        <div class="rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-gray-400">
+            아직 아이디어가 없습니다.
+        </div>
+        {% endfor %}
     </div>
-{% else %}
-  <p>아직 아이디어가 없습니다</p>
-{% endfor %}
 
-<form action="/ideas/{{ team_id }}/add" method="post">
-  <input name="title" class="border p-2">
-  <textarea name="content" class="border p-2"></textarea>
-  <button class="border rounded px-4 py-2">등록</button>
-</form>
+    <form action="/ideas/{{ team_id }}/add" method="post" class="mt-6 flex flex-col gap-3 rounded-lg border-2 border-blue-500 p-4">
+        <h3 class="text-xl font-bold text-blue-500">아이디어 등록</h3>
 
+        <input
+            name="title"
+            placeholder="아이디어 제목"
+            class="rounded border p-2"
+        >
+
+        <textarea
+            name="content"
+            placeholder="아이디어 내용"
+            class="min-h-28 rounded border p-2"
+        ></textarea>
+
+        <button class="w-fit rounded border-2 border-blue-500 px-4 py-2 text-blue-500">
+            등록
+        </button>
+    </form>
+</div>
 {% endblock %}

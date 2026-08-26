@@ -12,49 +12,49 @@
 
 <!--새 방 만들기-->
 <div class="p-4 border-2 border-blue-500 rounded">
-    <h2 class="text-xl font-bold text-blue-500">새 방 만들기</h2>
-    <p>방 생성 시, 방장이 됩니다</p>
+    <h2 class="text-xl font-bold text-blue-500 pb-2">새 방 만들기</h2>
+    <p class="pb-2"> 방 생성 시, 방장이 됩니다</p>
     <form action="{{ url_for('teams.making_team') }}" method="post">
-        <div class="flex gap-3">
-            <input type="text" placeholder="팀명" name="teamid" class="border p-2">
-            <input type="text" placeholder="주제" name="title" class="border p-2">
-            <input type="number" placeholder="인원" name="peoplenum" class="border p-2">
+        <div class="flex gap-3 pb-4">
+            <input type="text" placeholder="팀명" name="teamid" class="border rounded p-2">
+            <input type="text" placeholder="주제" name="title" class="border rounded p-2">
+            <input type="number" placeholder="인원" name="peoplenum" class="border rounded p-2">
+        <button type="submit" class="p-4 border-2 border-blue-500 text-blue-500 rounded">방 만들기</button>
         </div>
-        <button type="submit" class="p-4 border-2 border-blue-500">방 만들기</button>
     </form>
 </div>
 
 <!--코드로 참가하기-->
 <div class="p-4 border-2 border-blue-500 rounded">
-    <h2>코드로 참가하기</h2>
+    <h2 class="text-xl font-bold text-blue-500 pb-2">코드로 참가하기</h2>
 
     <form action="{{ url_for('teams.join_team') }}" method="post">
         초대코드
-        <input type="text" name="code" placeholder="초대코드" class="border p-2">
-        <button type="submit">참가하기</button>
+        <input type="text" name="code" placeholder="초대코드" class="border p-2 rounded">
+        <button type="submit" class="p-2 border-2 border-blue-500 text-blue-500 rounded">참가하기</button>
     </form>
 </div>
 
 <!--진행중인 방-->
 
 <div class="p-4 border-2 border-blue-500 rounded">
-    <h2>진행중인 방</h2>
+    <h2 class="text-xl font-bold text-blue-500 pb-2">진행중인 방</h2>
     <div class="flex gap-3">
         {%if process_team | length == 0 %}
         <div>현재 시작된 방이 없습니다.</div>
         {% endif %}
         {% for team in process_team %}
-        <a class="p-4 border-2 border-black-500 rounded" href="{{ url_for('teams.get_team', team_id=team['_id']) }}">
-            <div class="border-2 border-black-100 rounded">
+        <a class="p-4 border-2 border-black rounded" href="{{ url_for('teams.get_team', team_id=team['_id']) }}">
+            <div class="border-2 border-blue-500 text-blue-500 rounded">
                 {%if team.status == "IDEA" %}
                 아이디어 수집중
                 {% else %}
                 투표중
                 {% endif %}
             </div>
-            <div>{{ team.team_name }}</div>
-            <div>{{ team.title }}</div>
-            <div>{{ team.members | length }}/{{ team.peoplenum }}</div>
+            <div>팀명: {{ team.team_name }}</div>
+            <div>주제: {{ team.title }}</div>
+            <div>인원: {{ team.members | length }}/{{ team.peoplenum }}</div>
 
         </a>
         {% endfor %}
@@ -64,17 +64,17 @@
 
 <!--종료된 방-->
 <div class="p-4 border-2 border-gray-500 rounded">
-    <h2>종료된 방</h2>
+    <h2 class="text-xl font-bold text-gray-500 pb-2">종료된 방</h2>
     <div class="flex gap-3">
         {%if done_team | length == 0 %}
         <div>현재 종료된 방이 없습니다.</div>
         {% endif %}
         {% for team in done_team %}
         <a class="p-4 border-2 border-black-500 rounded" href="{{ url_for('teams.get_team', team_id=team['_id']) }}">
+            <div class="border-2 border-gray-400 text-gray-400 rounded">종료됨</div>
             <div>{{ team.team_name }}</div>
             <div>{{ team.title }}</div>
             <div>{{ team.members | length }}/{{ team.peoplenum }}</div>
-            <div>{{ team.status }}</div>
         </a>
         {% endfor %}
     </div>
