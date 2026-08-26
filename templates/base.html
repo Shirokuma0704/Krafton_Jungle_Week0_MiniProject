@@ -1,26 +1,39 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>PICK ME</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='css/auth.css') }}"
-        >
-    </head>
-    <body>
-        <nav>
-            <a href="/">PICKME</a>
-            {% if g.user %}
-            <span>{{ g.user.nickname }}님</span>
 
-            <form action="{{ url_for('auth.logout') }}" method="POST">
-                <button>로그아웃</button>
-            </form>
-            {% endif %}
-        </nav>
+<head>
+    <title>PICK ME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
 
-        {% block content %}
-        {% endblock %}
-    </body>
+<body>
+    <!-- justify-between: 좌우 끝에 정렬 justify-center: 가로 중앙 정렬 -->
+    <nav class="flex justify-between p-7 border-b-4 border-black px-20">
+        <a href="/" class="text-3xl">PICKME</a>
+        <div class="flex gap-2">
+            
+                {% if g.user %}
+                <div class="rounded-full border-2 border-blue-500 p-2 text-xl text-blue-500  bg-white">
+                <span>{{ g.user.nickname }}님</span>
+                </div>
+                <form action="{{ url_for('auth.logout') }}" method="POST"
+                    class="rounded-full border-2 border-gray-400 text-gray-400 p-2 text-xl  bg-white">
+                    <button>로그아웃</button>
+                </form>
+                {% else %}
+                <form action="{{ url_for('auth.login') }}"
+                    class="rounded-full border-2 border-blue-500 p-2 text-xl text-blue-500  bg-white">
+                    <button>로그인</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+</body>
+
 </html>
