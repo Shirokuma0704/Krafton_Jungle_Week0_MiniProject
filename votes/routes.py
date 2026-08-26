@@ -45,7 +45,7 @@ def vote(team_id):
         vote_chk = vote_check(team_id)
         return render_template('team/votes.html', user=user_id, leader=leader_check, status=1, vote_check=vote_chk, team_id = team_id, ideas= ideas, criteria=teams_data['criteria'], team=teams_data)
     elif teams_data['status'] == TeamStatus.DONE:
-        return redirect(url_for("votes.vote_result", team_id=team_id, team=teams_data))
+        return redirect(url_for("votes.vote_result", team_id=team_id))
     else:
         return "알 수 없는 팀 상태입니다.", 500
 
@@ -94,7 +94,7 @@ def start_vote(team_id):
         return "잘못된 접근입니다", 400
 
     db.teams.update_one({"_id": team_id}, {"$set": {"status": TeamStatus.VOTING.value, "criteria": criteria}})
-    return redirect(url_for("votes.vote", team_id=team_id, team=teams_data))
+    return redirect(url_for("votes.vote", team_id=team_id))
 
 @vote_bp.route('/<team_id>', methods=['POST']) #개별 투표
 def vote_individual(team_id):
@@ -151,7 +151,7 @@ def vote_individual(team_id):
 
     if voted >= total:
         db.teams.update_one({"_id": team_id}, {"$set": {"status": TeamStatus.DONE.value}})
-    return redirect(url_for("votes.vote", team_id=team_id, team=teams_data))
+    return redirect(url_for("votes.vote", team_id=team_id))
 
 
 
@@ -236,4 +236,4 @@ def force_stop(team_id):
     db.teams.update_one({"_id": team_id}, {"$set": {"status": TeamStatus.DONE.value}})
 
     teams_data = db.teams.find_one({"_id": team_id})
-    return redirect(url_for("votes.vote", team_id=team_id, team=teams_data))
+    return redirect(url_for("votes.vote", team_id=team_id))

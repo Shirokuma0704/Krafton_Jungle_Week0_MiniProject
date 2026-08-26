@@ -34,8 +34,8 @@
 </div>
 
 <div class=" items-start flex justify-between border-b-2 border-black p-5 px-28 text-xl">
-    <a href="{{ url_for('votes.vote', team_id=team['_id']) }}">투표</a>
     <a href="{{ url_for('ideas.idea', team_id=team['_id']) }}">아이디어</a> <!--블루프린트 이름.함수이름으로 연결!-->
+    <a href="{{ url_for('votes.vote', team_id=team['_id']) }}">투표</a>
     <a href="{{ url_for('members.members', team_id=team['_id']) }}">멤버 관리</a>
 </div>
 
