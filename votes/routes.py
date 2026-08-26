@@ -22,7 +22,7 @@ def is_leader(team_id, user_id):
         return False
     return True
 
-@vote_bp.route('/votes/<team_id>') #Vote 페이지 진입
+@vote_bp.route('/<team_id>') #Vote 페이지 진입
 def vote(team_id):
 
     user_id = session.get("user_id")
@@ -37,13 +37,15 @@ def vote(team_id):
     teams_data = db.teams.find_one({"_id": team_id})
     leader_check = is_leader(team_id, user_id)
 
+    ideas = list(db.ideas.find({"team_id": team_id}))
+
     if teams_data['status'] == TeamStatus.IDEA:
-        return render_template('team/_vote.html', user=user_id, leader=leader_check, status=0)
+        return render_template('team/_votes.html', user=user_id, leader=leader_check, status=0, team= team_id)
     elif teams_data['status'] == TeamStatus.VOTING:
         vote_chk = vote_check(team_id)
-        return render_template('team/_vote.html', user=user_id, leader=leader_check, status=1, vote_check=vote_chk)
+        return render_template('team/_votes.html', user=user_id, leader=leader_check, status=1, vote_check=vote_chk, team = team_id, ideas= ideas, criteria=teams_data['criteria'])
     elif teams_data['status'] == TeamStatus.DONE:
-        return redirect(url_for("vote.vote_result"))
+        return redirect(url_for("votes.vote_result", team_id=team_id))
     else:
         return "알 수 없는 팀 상태입니다.", 500
 
@@ -58,7 +60,7 @@ def vote_check(team_id):
     return True
 
 
-@vote_bp.route('/votes/<team_id>/start', methods=['POST']) #투표시작
+@vote_bp.route('/<team_id>/start', methods=['POST']) #투표시작
 def start_vote(team_id):
 
     team_id = objectid.ObjectId(team_id)
@@ -92,9 +94,9 @@ def start_vote(team_id):
         return "잘못된 접근입니다", 400
 
     db.teams.update_one({"_id": team_id}, {"$set": {"status": TeamStatus.VOTING.value, "criteria": criteria}})
-    return redirect(url_for("vote.vote", team_id=team_id))
+    return redirect(url_for("votes.vote", team_id=team_id))
 
-@vote_bp.route('/votes/<team_id>', methods=['POST']) #개별 투표
+@vote_bp.route('/<team_id>', methods=['POST']) #개별 투표
 def vote_individual(team_id):
     user_id = session.get("user_id")
     if user_id is None:
@@ -134,7 +136,8 @@ def vote_individual(team_id):
             key = f"score_{idea['_id']}_{i}"
             raw = request.form.get(key)
             if raw is None:
-                return "전부 투표되지 않았습니다.", 400
+                # return "전부 투표되지 않았습니다.", 400
+                return key
             if raw not in ["1", "2", "3", "4", "5"]:
                 return "잘못된 접근입니다", 403
             raw = int(raw)
@@ -148,14 +151,13 @@ def vote_individual(team_id):
 
     if voted >= total:
         db.teams.update_one({"_id": team_id}, {"$set": {"status": TeamStatus.DONE.value}})
-    return redirect(url_for("vote.vote", team_id=team_id))
+    return redirect(url_for("votes.vote", team_id=team_id))
 
 
 
 
-@vote_bp.route('/votes/<team_id>/result', methods=['GET']) #투표 결과
+@vote_bp.route('/<team_id>/result', methods=['GET']) #투표 결과
 def vote_result(team_id):
-
 
     user_id = session.get("user_id")
     if user_id is None:
@@ -211,11 +213,11 @@ def vote_result(team_id):
 
     ave_score = sorted(ave_score, key=lambda x: x['total'], reverse=True)
 
-    return render_template('team/_result.html', team_id=team_id, ave_score=ave_score)
+    return render_template('team/_votes.html', team_id=team_id, ave_score=ave_score, status=2)
 
 
 
-@vote_bp.route('/votes/<team_id>/forcestop', methods=['POST']) #방장 정지
+@vote_bp.route('/<team_id>/forcestop', methods=['POST']) #방장 정지
 def force_stop(team_id):
     team_id = objectid.ObjectId(team_id)
     user_id = session.get("user_id")
@@ -232,4 +234,4 @@ def force_stop(team_id):
         return "잘못된 접근입니다.", 403
 
     db.teams.update_one({"_id": team_id}, {"$set": {"status": TeamStatus.DONE.value}})
-    return redirect(url_for("vote.vote", team_id=team_id))
+    return redirect(url_for("votes.vote", team_id=team_id))

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, g, redirect, url_for, render_template
+from flask import Blueprint, request, g, redirect, url_for, render_template, session
 from enum import Enum
 import string, random
 from db import db
@@ -18,9 +18,22 @@ def teams():
 @teams_bp.route("/making_team", methods=['POST'])
 def making_team():
     if request.method == "POST":
+        user_id = session.get("user_id")
+
+        if user_id is None:
+            return render_template(
+                "auth/login.html",
+                error="로그인 후 이용해주세요.")
         teamid = request.form.get("teamid") # 팀명
         title = request.form.get("title") # 목표/주제
-        peoplenum= int(request.form.get("peoplenum")) # 몇 명인지
+        count= request.form.get("peoplenum") # 몇 명인지
+        
+        if not all([teamid, title, count]):
+            return render_template(
+                "main/index.html",
+                error="모든 항목을 입력해 주세요.")
+
+        peoplenum = int(count)
 
         kingid = g.user["_id"] #방장 id 
 
@@ -42,18 +55,18 @@ def making_team():
             "status" : TeamStatus.IDEA.value,
             "code": code,
             "members": [kingid],
+            "criteria": []
         }
 
         team_collection.insert_one(team)
 
-        return redirect(url_for("index"))
-    return render_template("main/index.html");
+    return redirect(url_for("index"))
 
 @teams_bp.route("/join_team", methods=['POST'])
 def join_team():
         code = request.form.get("code") #초대 코드
 
-        if code is None:
+        if not code:
             return "존재하지 않는 초대 코드입니다."
 
         team = team_collection.find_one({"code": code})
@@ -62,7 +75,7 @@ def join_team():
         if team is None:
             return "존재하지 않는 초대 코드입니다."
 
-        if len(team["members"]) >= team["peoplenum"]:
+        if len(team["members"]) >= team["peoplenum"]: 
             return "인원이 가득 찼습니다."
 
         team_collection.update_one(
@@ -75,3 +88,22 @@ def join_team():
         )
 
         return redirect(url_for("index"))
+
+def get_teams():
+    teams = list(team_collection.find())
+
+    process_team = []
+    done_team = []
+
+    # 전체 팀 배열에서 진행중인 팀과 종료된 팀을 따로 구분한다.
+    for team in teams:
+        if team["status"] == TeamStatus.DONE.value:
+            done_team.append(team)
+        else:
+            process_team.append(team)
+
+    return process_team, done_team
+
+@teams_bp.route("/<team_id>")
+def get_team(team_id):
+    return team_id;
