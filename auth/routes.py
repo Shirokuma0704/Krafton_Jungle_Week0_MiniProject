@@ -52,7 +52,7 @@ def signup():
         # 모두 입력 안 했을 경우
         if not all([userid, nickname, password, repassword]):
             flash("모든 항목을 입력해 주세요.")
-            returnredirect(url_for("auth.signup"))
+            return redirect(url_for("auth.signup"))
         if users.find_one({"userid": userid}):
             flash("이미 사용중인 아이디입니다.")
             return redirect(url_for("auth.signup"))
