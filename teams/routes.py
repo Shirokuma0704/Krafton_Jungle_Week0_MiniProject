@@ -1,4 +1,5 @@
-from flask import Blueprint, request, g, redirect, url_for, render_template, session
+from flask import Blueprint, request, g, redirect, url_for, render_template, session, flash
+from bson import ObjectId
 from enum import Enum
 import string, random
 from db import db
@@ -13,25 +14,22 @@ class TeamStatus(str, Enum):
 
 @teams_bp.route("/")
 def teams():
-    return render_template("main/index.html");
+    return redirect(url_for("index"));
 
 @teams_bp.route("/making_team", methods=['POST'])
 def making_team():
     if request.method == "POST":
-        user_id = session.get("user_id")
+        if g.user is None:
+            flash("로그인이 필요합니다.")
+            return redirect(url_for("auth.login"))
 
-        if user_id is None:
-            return render_template(
-                "auth/login.html",
-                error="로그인 후 이용해주세요.")
         teamid = request.form.get("teamid") # 팀명
         title = request.form.get("title") # 목표/주제
         count= request.form.get("peoplenum") # 몇 명인지
         
         if not all([teamid, title, count]):
-            return render_template(
-                "main/index.html",
-                error="모든 항목을 입력해 주세요.")
+            flash("모든 항목을 입력해주세요.")
+            return redirect(url_for("index"))
 
         peoplenum = int(count)
 
@@ -64,20 +62,27 @@ def making_team():
 
 @teams_bp.route("/join_team", methods=['POST'])
 def join_team():
+        if g.user is None:
+            flash("로그인이 필요합니다.")
+            return redirect(url_for("auth.login"))
+        
         code = request.form.get("code") #초대 코드
 
         if not code:
-            return "존재하지 않는 초대 코드입니다."
+            flash("존재하지 않는 초대 코드입니다.")
+            return redirect(url_for("index"))
 
         team = team_collection.find_one({"code": code})
 
         # 팀이 없을 때
         if team is None:
-            return "존재하지 않는 초대 코드입니다."
-
+            flash("존재하지 않는 초대 코드입니다.")
+            return redirect(url_for("index"))
+        
         if len(team["members"]) >= team["peoplenum"]: 
-            return "인원이 가득 찼습니다."
-
+            flash("정원을 초과하였습니다.")
+            return redirect(url_for("index"))
+        
         team_collection.update_one(
             {"_id": team["_id"]},
             {
@@ -90,7 +95,9 @@ def join_team():
         return redirect(url_for("index"))
 
 def get_teams():
-    teams = list(team_collection.find())
+    if g.user is None:
+        return [], []
+    teams = list(team_collection.find({"members": g.user["_id"]}))
 
     process_team = []
     done_team = []
@@ -106,4 +113,18 @@ def get_teams():
 
 @teams_bp.route("/<team_id>")
 def get_team(team_id):
-    return team_id;
+    if g.user is None:
+        flash("로그인이 필요합니다.")
+        return redirect(url_for("auth.login"))
+    
+    team = team_collection.find_one({"_id": ObjectId(team_id)})
+
+    if team is None:
+        flash("존재하지 않는 팀입니다.")
+        return redirect(url_for("index"))
+    #내 팀이 아닌 경우 메인화면으로 이동
+    if g.user["_id"] not in team["members"]:
+        flash("접근 권한이 없는 팀입니다.")
+        return redirect(url_for("index"))
+    
+    return render_template("team/votes.html", team=team)
