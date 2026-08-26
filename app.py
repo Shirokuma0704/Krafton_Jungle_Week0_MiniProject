@@ -3,9 +3,11 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, render_template
 from auth.routes import auth_bp
-from teams.routes import teams_bp, get_teams
-from votes.routes import vote_bp
+from teams.routes import teams_bp
 from ideas.routes import idea_bp
+from votes.routes import vote_bp
+from members.routes import member_bp
+from teams.routes import teams_bp, get_teams
 
 load_dotenv()
 
@@ -13,8 +15,9 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(teams_bp, url_prefix="/teams")
-app.register_blueprint(vote_bp, url_prefix='/votes')
-app.register_blueprint(idea_bp, url_prefix='/ideas')
+app.register_blueprint(idea_bp, url_prefix="/ideas")
+app.register_blueprint(vote_bp, url_prefix="/votes")
+app.register_blueprint(member_bp, url_prefix="/members")
 
 @app.route('/')
 def index():
