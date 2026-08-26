@@ -123,4 +123,4 @@ def get_team(team_id):
         flash("존재하지 않는 팀입니다.")
         return redirect(url_for("index"))
     
-    return render_template("team/detail.html", team=team)
+    return render_template("team/votes.html", team=team)

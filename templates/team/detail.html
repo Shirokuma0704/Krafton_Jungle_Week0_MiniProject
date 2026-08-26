@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!--팀 상단 정보-->
+<!--items-center: 가운데 정렬-->
+<div class=" items-center border-2 border-black-200 rounded">
+    <div class="mb-2">팀명: {{ team.team_name }}</div>
+    <div class="mb-2">주제: {{ team.title }} </div>
+    <div class="mb-2">초대코드: {{ team.code }} </div>
+    <div class="mb-2">인원수: {{ team.members | length }}/{{ team.peoplenum }}명</div>
+    <div class="mb-2"> 현재 상태:
+        {%if team.status == "IDEA" %}
+        아이디어 수집중
+        {% elif team.status == "VOTING"%}
+        투표중
+        {% elif team.status == "DONE"%}
+        선정 완료
+        {% endif %}
+    </div>
+</div>
+
+<div class="items-center border-2 border-black-200 rounded">
+    <a href="{{ url_for('idea.ideas', team_id=team['_id']) }}">아이디어</a> <!--블루프린트 이름.함수이름으로 연결!-->
+    <a href="{{ url_for('votes.votes', team_id=team['_id']) }}">투표</a>
+    <a href="{{ url_for('members.members', team_id=team['_id']) }}">멤버 관리</a>
+</div>
+
+{% block team_content %}{% endblock %}
+{% endblock %}

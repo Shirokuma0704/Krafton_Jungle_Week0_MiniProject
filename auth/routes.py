@@ -79,7 +79,7 @@ def signup():
     
     return render_template("auth/signup.html")
 
-@auth_bp.route('logout', methods=["POST"])
+@auth_bp.route('/logout', methods=["POST"])
 def logout():
     session.clear()
     return redirect(url_for("index")) #로그아웃 성공 시, 메인화면으로 이동
