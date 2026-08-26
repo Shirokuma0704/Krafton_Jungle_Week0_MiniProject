@@ -1,0 +1,28 @@
+{% extends "team/detail.html" %}
+
+{% block team_content %}
+<h2>팀원 목록</h2>
+<!--팀원 데이터 딕셔너리 members 사용. Key:아이디 Value: 닉네임 -->
+<div class="border-5 border-black-500 rounded-500 p-3">
+    {% for id, nickname in members.items() %}
+
+    <div class="border-5 border-black-500 rounded-500 p-3">
+        
+        <div>{{ nickname }}</div>
+
+        {% if id == team.king_id %}
+        <div>방장</div>
+
+        {% else %}
+        <div>팀원</div>
+
+        {% if team.king_id == g.user["_id"] %}
+        <form action="{{ url_for('members.kick', team_id=team['_id'], member_id=id) }}" method="post">
+            <button type="submit">강퇴</button>
+        </form>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
