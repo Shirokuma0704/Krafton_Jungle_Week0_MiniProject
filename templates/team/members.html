@@ -1,28 +1,36 @@
 {% extends "team/detail.html" %}
 
 {% block team_content %}
-<h2>팀원 목록</h2>
+
+<h2 class="p-5 text-3xl font-bold">팀원 목록</h2>
 <!--팀원 데이터 딕셔너리 members 사용. Key:아이디 Value: 닉네임 -->
-<div class="border-5 border-black-500 rounded-500 p-3">
-    {% for id, nickname in members.items() %}
+<div class="border-5 border-black-500 rounded-500 p-3 ">
+    <div class="rounded border-2 border-black px-3 py-1 pb-4">
+        {% for id, nickname in members.items() %}
+        <div class="flex items-center gap-2 border-b border-black py-4 last:border-b-0">
+            <div class="text-3xl">{{ nickname }}</div>
 
-    <div class="border-5 border-black-500 rounded-500 p-3">
-        
-        <div>{{ nickname }}</div>
+            {% if id == team.king_id %}
+            <span class="inline-flex rounded-full border-2 border-blue-500 px-2 py-1 text-sm text-blue-500">
+                방장
+            </span>
+            {% else %}
+            <span class="inline-flex rounded-full border-2 border-blue-500 px-2 py-1 text-sm text-blue-500">
+                팀원
+            </span>
+            {% if team.king_id == g.user["_id"] %}
+            <span class="inline-flex rounded-full border-2 border-red-500 px-2 py-1 text-sm text-red-500">
+            <form action="{{ url_for('members.kick', team_id=team['_id'], member_id=id) }}" method="post">
+                <button type="submit">강퇴</button>
+            </form>
+            </span>
+            {% endif %}
+            {% endif %}
+        </div>
 
-        {% if id == team.king_id %}
-        <div>방장</div>
+    {% endfor %}
 
-        {% else %}
-        <div>팀원</div>
-
-        {% if team.king_id == g.user["_id"] %}
-        <form action="{{ url_for('members.kick', team_id=team['_id'], member_id=id) }}" method="post">
-            <button type="submit">강퇴</button>
-        </form>
-        {% endif %}
-        {% endif %}
-        {% endfor %}
     </div>
 </div>
+
 {% endblock %}
