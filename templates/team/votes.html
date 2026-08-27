@@ -65,7 +65,7 @@
 <div>
     {% for ave_score in ave_score %}
     <div class="border rounded p-2 mb-2"></div>
-    <h2 class="mb-5 text-3xl mx-7 mt-6 font-bold">{{loop.index}}위 {{ ave_score.title }} : {{ ave_score.total|round(1)}}</h2>
+    <h2 class="mb-5 text-3xl mx-7 mt-6 font-bold">{{loop.index}}위 {{ ave_score.title }} : {{ (ave_score.total/voted)|round(1)}}</h2>
     {% for k, v in ave_score.score.items() %}
     <p class="mb-5 text-xl mx-1 mt-1 font-bold">{{k}} : {{v|round(1)}}</p>
     {% endfor %}
