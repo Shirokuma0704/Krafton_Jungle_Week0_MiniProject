@@ -208,7 +208,7 @@ def vote_result(team_id):
         ave_score.append({
             "title": idea['title'],
             "score": criteria,
-            "total": sum(criteria.values()),
+            "total": sum(criteria.values()) / len(criteria),
         })
 
     ave_score = sorted(ave_score, key=lambda x: x['total'], reverse=True)
