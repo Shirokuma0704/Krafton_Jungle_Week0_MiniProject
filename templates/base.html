@@ -6,16 +6,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
 </head>
+<main class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
 
-<body>
-    <!-- justify-between: 좌우 끝에 정렬 justify-center: 가로 중앙 정렬 -->
-    <nav class="flex justify-between p-7 border-b-4 border-black px-20">
-        <a href="/" class="text-3xl">PICKME</a>
-        <div class="flex gap-2">
-            
+    <body>
+        <!-- justify-between: 좌우 끝에 정렬 justify-center: 가로 중앙 정렬 -->
+        <nav class="flex justify-between p-7 border-b-4 border-black px-20">
+            <a href="/" class="text-3xl">PICKME</a>
+            <div class="flex gap-2">
+
                 {% if g.user %}
                 <div class="rounded-full border-2 border-blue-500 p-2 text-xl text-blue-500  bg-white">
-                <span>{{ g.user.nickname }}님</span>
+                    <span>{{ g.user.nickname }}님</span>
                 </div>
                 <form action="{{ url_for('auth.logout') }}" method="POST"
                     class="rounded-full border-2 border-gray-400 text-gray-400 p-2 text-xl  bg-white">
@@ -28,12 +29,13 @@
                 </form>
                 {% endif %}
             </div>
-        </div>
+            </div>
 
-    </nav>
+        </nav>
 
-    {% block content %}
-    {% endblock %}
+        {% block content %}{% endblock %}
+</main>
+
 </body>
 
 </html>
