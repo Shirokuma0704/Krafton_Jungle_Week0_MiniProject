@@ -24,30 +24,39 @@
 
 {% if status == 1 %}
 {% if vote_check %}
-<h3 class="mb-5 text-3xl mx-7 mt-6 font-bold">이미 투표 완료하였습니다.</h3>
+<h3 class="mx-10 mt-6 rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-gray-400">이미 투표 완료하였습니다.</h3>
 {% else %}
 <form action="/votes/{{ team_id }}" method="post">
-
+<div class="flex flex-col gap-6">
     {% for idea_list in ideas %}
-    <div class="border rounded p-4 mb-2">
-        <h2 class="font-bold text-lg">{{ idea_list.title }}</h2>
+    <div class="mx-10 border rounded p-4 mb-2">
+        <h2 class="mx-4 text-xl font-bold text-blue-500">{{ idea_list.title }}</h2>
         {% for criteria in criteria %}
         {% set i = loop.index0 %}
-        <h3 class="font-bold text-lg">{{ criteria }}</h3>
+        <h3 class="text-gray-700 leading-relaxed" style="margin-bottom: 25px; margin-top: 25px">{{ criteria }}</h3>
+
+        <div class="flex">
         {% for n in range(1, 6) %}
-        <input type="radio" name=score_{{idea_list._id}}_{{i}} value={{n}} id={{idea_list._id}}_{{i}}_{{n}}>
-        <label for={{idea_list._id}}_{{i}}_{{n}}>{{n}}</label>
+        <div><input type="radio" name=score_{{idea_list._id}}_{{i}} value={{n}} id={{idea_list._id}}_{{i}}_{{n}} class="peer sr-only">
+            <label for={{idea_list._id}}_{{i}}_{{n}} class="w-14 py-2 text-center border-2 border-blue-200 text-gray-500 cursor-pointer peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 peer-checked:font-bold"style="
+    padding-left: 14px;
+    padding-right: 14px;
+">{{n}}</label></div>
         {% endfor %}
+        </div>
         {% endfor %}
     </div>
     {% endfor %}
-    <button class="border rounded px-4 py-2">투표</button>
+    <button class="border rounded px-4 py-2 border-blue-500  text-blue-500 self_end">투표</button>
+    </div>
 </form>
 {% endif %}
 {% if leader == True %}
+<div class="border-t-2 border-black pt-5"></div>
 <form action="/votes/{{ team_id }}/forcestop" method="post">
     <button class="border rounded px-4 py-2">투표 종료</button>
 </form>
+
 {% endif %}
 
 {% endif %}
