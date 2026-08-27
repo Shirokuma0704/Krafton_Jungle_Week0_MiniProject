@@ -212,8 +212,10 @@ def vote_result(team_id):
         })
 
     ave_score = sorted(ave_score, key=lambda x: x['total'], reverse=True)
+    voted = db.votes.count_documents({"team_id": team_id})
 
-    return render_template('team/votes.html', team_id=team_id, ave_score=ave_score, status=2, team=teams_data)
+
+    return render_template('team/votes.html', team_id=team_id, ave_score=ave_score, status=2, team=teams_data, voted=voted)
 
 
 
